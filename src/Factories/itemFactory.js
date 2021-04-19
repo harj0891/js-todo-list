@@ -12,44 +12,54 @@ let itemList = [];
 
 const itemFactory = (title, description, project, dueDate) => {
     isComplete = false;
-    // orderPriority = 0;
-    function getTitle() {
-        return title;
-    }
-    function setTitle (newTitle) {
-        title = newTitle;
-    }
-    function getDescription() {
-        return description;
-    }
-    function setDescription(newDescription) {
-        description = newDescription;
-    }
-    function getProject() {
-        return project;
-    }
-    function setProject(newProject) {
-        project = newProject;
-    }
 
-    function getDueDate() {
-        return dueDate;
-    }        
-    function setDueDate(newDueDate) {
-        dueDate = newDueDate;
-    }
-    function getIsComplete () {
-        return isComplete;
-    }   
-    function setIsComplete (newIsComplete) {
-        if (newIsComplete) {
-            isComplete = true;
-        } else {
-            isComplete = false;
+    let id = () => {      
+        let nextID;
+        if (itemList.length == 0) {
+            nextID = 1; 
+            return nextID;
+        } else if (itemList.length > 0){
+            nextID = itemList[itemList.length-1].id + 1;
+            return nextID;
         }
     }
 
-    return {getTitle, setTitle, getDescription, setDescription, getProject, setProject, getDueDate, setDueDate, getIsComplete, setIsComplete};
-}
+    function setTitle (newTitle) {
+        this.title = newTitle;
+    }
 
+    function setDescription(newDescription) {
+        this.description = newDescription;
+    }
+
+    function setProject(newProject) {
+        this.project = newProject;
+    }
+
+    function setDueDate(newDueDate) {
+        this.dueDate = newDueDate;
+    }
+
+    function setIsComplete (newIsComplete) {
+        if (newIsComplete) {
+            this.isComplete = true;
+        } else {
+            this.isComplete = false;
+        }
+    }
+
+    return {
+        id: id(), 
+        title: title, 
+        description: description, 
+        dueDate: dueDate,
+        project: project, 
+        isComplete: isComplete,
+        setTitle, 
+        setDescription, 
+        setProject, 
+        setDueDate, 
+        setIsComplete
+    };
+}
 export {itemFactory, itemList};

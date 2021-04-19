@@ -10,40 +10,44 @@
 let projectList = [];
 
 const projectFactory = (title, description, dueDate, labelColor) => {
-    let _nextId = 1;
-
-    id = () => {
-        return _nextId++;
+    id = () => {      
+        let nextID;
+        if (projectList.length == 0) {
+            nextID = 1; 
+        } else if (projectList.length > 0){
+            nextID = projectList[projectList.length-1].id + 1;
+        }
+        return nextID;
     }
 
-    function getTitle() {
-        return title;
-    }
     function setTitle(newTitle) {
-        title = newTitle;
+        this.title = newTitle;
     }
-    function getDescription() {
-        return description;
-    }
+
     function setDescription(newDescription) {
-        description = newDescription;
+        this.description = newDescription;
     }
-    function getDueDate() {
-        return dueDate;
-    }
+
     function setDueDate(newDueDate) {
-        dueDate = newDueDate;
+        this.dueDate = newDueDate;
     }
-    function getLabelColor() {
-        return labelColor;
-    }        
+       
     function setLabelColor(newLabelColor) {
-        labelColor = newLabelColor;
+        this.labelColor = newLabelColor;
     }
 
-    return {title: title, id, setTitle, getDescription, setDescription, getDueDate, setDueDate, getLabelColor, setLabelColor};
+    return {
+        id: id(), 
+        title: title, 
+        description: description, 
+        dueDate: dueDate, 
+        labelColor: labelColor,
+        setTitle,
+        setDescription,
+        setDueDate,
+        setLabelColor
+    };
 }
-
 
 export {projectFactory, projectList};
 
