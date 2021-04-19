@@ -4,38 +4,44 @@
 - isComplete (boolean)
 - dueDate (optional)
 - orderPriority (optional) -- can later introduce drag/drop 
-- project (can only belong to 1 project, can't be changed)
+- project (can only belong to 1 project, CAN be changed)
 - heading (can only belong to 1 heading, CAN be changed)
 */
 
-const itemFactory = (title, description, dueDate) => {
-    this.title = title;
-    this.description = description;
-    this.dueDate = dueDate;
+let itemList = [];
+
+const itemFactory = (title, description, project, dueDate) => {
     isComplete = false;
-    orderPriority = 0;
-    getTitle = () => {
-        return this.title;
+    // orderPriority = 0;
+    function getTitle() {
+        return title;
     }
-    setTitle = (newTitle) => {
+    function setTitle (newTitle) {
         title = newTitle;
     }
-    getDescription = () => {
-        return this.description;
+    function getDescription() {
+        return description;
     }
-    setDescription = (newDescription) => {
+    function setDescription(newDescription) {
         description = newDescription;
     }
-    getDueDate = () => {
-        return this.dueDate;
+    function getProject() {
+        return project;
+    }
+    function setProject(newProject) {
+        project = newProject;
+    }
+
+    function getDueDate() {
+        return dueDate;
     }        
-    setDueDate = (newDueDate) => {
+    function setDueDate(newDueDate) {
         dueDate = newDueDate;
     }
-    getIsComplete = () => {
-        return this.isComplete;
+    function getIsComplete () {
+        return isComplete;
     }   
-    setIsComplete = (newIsComplete) => {
+    function setIsComplete (newIsComplete) {
         if (newIsComplete) {
             isComplete = true;
         } else {
@@ -43,7 +49,7 @@ const itemFactory = (title, description, dueDate) => {
         }
     }
 
-    return {getTitle, setTitle, getDescription, setDescription, getDueDate, setDueDate, getIsComplete, setIsComplete};
+    return {getTitle, setTitle, getDescription, setDescription, getProject, setProject, getDueDate, setDueDate, getIsComplete, setIsComplete};
 }
 
-export {itemFactory};
+export {itemFactory, itemList};

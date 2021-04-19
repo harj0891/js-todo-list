@@ -10,10 +10,12 @@
 let projectList = [];
 
 const projectFactory = (title, description, dueDate, labelColor) => {
-    let progress = 0;
-    let orderPriority = 0;
-    let headers = [];
-    let items = [];
+    let _nextId = 1;
+
+    id = () => {
+        return _nextId++;
+    }
+
     function getTitle() {
         return title;
     }
@@ -38,23 +40,8 @@ const projectFactory = (title, description, dueDate, labelColor) => {
     function setLabelColor(newLabelColor) {
         labelColor = newLabelColor;
     }
-    function getProgress() {
-        _setProgress();
-        return progress;
-    }    
-    function _setProgress() {
-        // read items in list and based on item.isComplete calculate overral project progress
-        // if no items in the list, then progress is 0%
-        
-    }
-    function addItem(item) {
 
-    }
-    function removeItem(item) {
-
-    }
-
-    return {getTitle, setTitle, getDescription, setDescription, getDueDate, setDueDate, getLabelColor, setLabelColor, getProgress, addItem, removeItem};
+    return {title: title, id, setTitle, getDescription, setDescription, getDueDate, setDueDate, getLabelColor, setLabelColor};
 }
 
 
