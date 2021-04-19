@@ -1,33 +1,15 @@
 
-let text = () => {
-    console.log("test");
-}
+import {projectFactory, projectList} from "./Factories/projectFactory";
+// import * as Header from "./Factories/headingFactory";
+// import * as Item from "./Factories/itemFactory";
 
 
-/* project
-- title
-- description (optional)
-- progress (in %)
-- dueDate (optional)
-- orderPriority (optional) -- can later introduce drag/drop 
-- labelColor (optional) -- will change project label color
-- headings (optional) -- [] to group items 
-- items []
-*/
-
-/* item
-- title
-- description/notes
-- status (pending/done)
-- dueDate (optional)
-- orderPriority (optional) -- can later introduce drag/drop 
-- project (can only belong to 1 project, can't be changed)
-*/
 
 
-/* heading
-- title
-- description (optional)
-- project (can only belong to 1 project, can't be changed)
-*/
+// setup detault project
+let newProject = projectFactory("Default", "Default project", "test", "Grey"); 
+projectList.push(newProject);
+console.log(projectList[0].getTitle());
+
+
 

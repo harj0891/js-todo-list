@@ -1,1 +1,1 @@
-console.log("test");
+(()=>{"use strict";var t,e,n,o,u=[],r=(t="Default",e="Default project",n="test",o="Grey",{getTitle:function(){return t},setTitle:function(e){t=e},getDescription:function(){return e},setDescription:function(t){e=t},getDueDate:function(){return n},setDueDate:function(t){n=t},getLabelColor:function(){return o},setLabelColor:function(t){o=t},getProgress:function(){return 0},addItem:function(t){},removeItem:function(t){}});u.push(r),console.log(u[0].getTitle())})();
