@@ -42,7 +42,6 @@ const projectFactory = (title, description, dueDate, labelColor) => {
     };
 }
 
-
 const itemFactory = (title, description, project, dueDate) => {
     isComplete = false;
 
@@ -96,7 +95,6 @@ const itemFactory = (title, description, project, dueDate) => {
     };
 }
 
-
 // mock data
 (function createMockData() {
     let newProject = projectFactory("Default", "Default project", "test", "Grey"); 
@@ -127,13 +125,8 @@ const DisplayController = (function() {
     // button event listeners
     let newProjectButton = document.querySelector("#create-project");
     newProjectButton.addEventListener("click", function() {
-        // function to show module
-    });
-
+        showCreateProjectForm();
     
-    let newItemButton = document.querySelector("#create-item");
-    newItemButton.addEventListener("click", function() {
-        // function to show module
     });
 
     function displayToDoList() {
@@ -147,6 +140,12 @@ const DisplayController = (function() {
             let projectInfo = document.createElement("p");
             projectInfo.textContent = `PROJECT | ID: ${project.id}, Title: ${project.title}`;
 
+            let newItemButton = document.createElement("button");
+            newItemButton.textContent = "New item";
+            newItemButton.addEventListener("click", function() {
+                showCreateItemForm();
+            });
+
             let buttonProjectUpdate = document.createElement("button");
             buttonProjectUpdate.textContent = "update project";
 
@@ -154,6 +153,7 @@ const DisplayController = (function() {
             buttonProjectDelete.textContent = "delete project";
             
             projectContainer.appendChild(projectInfo);
+            projectContainer.appendChild(newItemButton);
             projectContainer.appendChild(buttonProjectUpdate);
             projectContainer.appendChild(buttonProjectDelete);
             
@@ -181,8 +181,81 @@ const DisplayController = (function() {
         });
     };
 
+    function showCreateProjectForm() {
+        let navigationContainer = document.querySelector("#container-navigation");
 
-    // modal create project
+        // check if form already exists 
+        let alreadyExists = document.querySelector("#create-project-form");
+        if (alreadyExists) {
+            console.log("project create form already open");
+            // do nothing
+        } else {
+            let projectContainer = document.createElement("section");
+            projectContainer.setAttribute("id","create-project-form");
+    
+            let projectNameLabel = document.createElement("label");
+            projectNameLabel.setAttribute("for","pname");
+            projectNameLabel.textContent = "Name";
+
+            let projectNameField = document.createElement("input");
+            projectNameField.setAttribute("id","pname");
+
+            let projectDescLabel = document.createElement("label");
+            projectDescLabel.setAttribute("for","pdesc");
+            projectDescLabel.textContent = "Description";
+
+            let projectDescField = document.createElement("input");
+            projectDescField.setAttribute("id","pdesc");
+
+            let projectDueDateLabel = document.createElement("label");
+            projectDueDateLabel.setAttribute("for","pduedate");
+            projectDueDateLabel.textContent = "Due Date";
+
+            let projectDueDateField = document.createElement("input");
+            projectDueDateField.setAttribute("id","pduedate");
+
+            let projectColorLabel = document.createElement("label");
+            projectColorLabel.setAttribute("for","pcolor");
+            projectColorLabel.textContent = "Colour";
+
+            let projectColorField = document.createElement("input");
+            projectColorField.setAttribute("id","pcolor");
+
+            let projectCreateButton = document.createElement("button");
+            projectCreateButton.textContent = "Create project";
+
+            projectContainer.appendChild(projectNameLabel);
+            projectContainer.appendChild(projectNameField);
+            projectContainer.appendChild(projectDescLabel);
+            projectContainer.appendChild(projectDescField);
+            projectContainer.appendChild(projectDueDateLabel);
+            projectContainer.appendChild(projectDueDateField);
+            projectContainer.appendChild(projectColorLabel);
+            projectContainer.appendChild(projectColorField);
+            projectContainer.appendChild(projectCreateButton);
+    
+            navigationContainer.appendChild(projectContainer); 
+
+            // create button event listener
+            projectCreateButton.addEventListener("click", function() {
+                let projectNameValue = document.querySelector("#pname").value;
+                let projectDescValue = document.querySelector("#pdesc").value;
+                let projectDueDateValue = document.querySelector("#pduedate").value;
+                let projectColorValue = document.querySelector("#pcolor").value;
+
+                // call create project
+                TodolistController.createProject(projectNameValue, projectDescValue, projectDueDateValue, projectColorValue);
+
+                // reset form
+                projectContainer.remove();
+            })
+        }
+    }
+
+    function showCreateItemForm() {
+
+    }
+
     // modal update project
     // modal delete project - are you sure?
 
@@ -204,3 +277,13 @@ const DisplayController = (function() {
 })();
 
 
+const TodolistController = (function() { 
+    function createProject(title, description, dueDate, color) {
+        let newProject = projectFactory(title, description, dueDate, color); 
+        projectList.push(newProject);
+
+        DisplayController.displayToDoList();
+    }
+
+    return {createProject};
+})();
