@@ -143,7 +143,8 @@ const DisplayController = (function() {
             let newItemButton = document.createElement("button");
             newItemButton.textContent = "New item";
             newItemButton.addEventListener("click", function() {
-                showCreateItemForm();
+                let createItemForm = showCreateItemForm(project.id);
+                projectContainer.appendChild(createItemForm);
             });
 
             let buttonProjectUpdate = document.createElement("button");
@@ -161,6 +162,7 @@ const DisplayController = (function() {
                 if (item.project == project.id) {
                     let itemContainer = document.createElement("section");
                     itemContainer.setAttribute("id", `container-item-${item.id}`);
+                    itemContainer.setAttribute("class", 'item');
 
                     let iteminfo = document.createElement("p");
                     iteminfo.textContent = `ITEM | ID: ${item.id}, Title: ${item.title}`;
@@ -237,34 +239,95 @@ const DisplayController = (function() {
             navigationContainer.appendChild(projectContainer); 
 
             // create button event listener
-            projectCreateButton.addEventListener("click", function() {
-                let projectNameValue = document.querySelector("#pname").value;
-                let projectDescValue = document.querySelector("#pdesc").value;
-                let projectDueDateValue = document.querySelector("#pduedate").value;
-                let projectColorValue = document.querySelector("#pcolor").value;
-
-                // call create project
-                TodolistController.createProject(projectNameValue, projectDescValue, projectDueDateValue, projectColorValue);
-
-                // reset form
-                projectContainer.remove();
-            })
+            projectCreateButton.addEventListener("click", submitProjectForm);
         }
     }
 
-    function showCreateItemForm() {
+    function submitProjectForm() {
+            let projectNameValue = document.querySelector("#pname").value;
+            let projectDescValue = document.querySelector("#pdesc").value;
+            let projectDueDateValue = document.querySelector("#pduedate").value;
+            let projectColorValue = document.querySelector("#pcolor").value;
 
+            // call create project
+            TodolistController.createProject(projectNameValue, projectDescValue, projectDueDateValue, projectColorValue);
+
+            // reset form
+            let projectContainer = document.querySelector("#create-project-form");
+            projectContainer.remove();
+    }
+
+
+    
+    function showCreateItemForm(projectID) {
+        // check if form already exists 
+        let alreadyExists = document.querySelector(`#create-item-form-p${projectID}`);
+        if (alreadyExists) {
+            console.log("item create form already open");
+            // do nothing
+        } else {
+            let itemContainer = document.createElement("section");
+            itemContainer.setAttribute("id",`#create-item-form-p${projectID}`);
+    
+            let itemNameLabel = document.createElement("label");
+            itemNameLabel.setAttribute("for","itemname");
+            itemNameLabel.textContent = "Name";
+
+            let itemNameField = document.createElement("input");
+            itemNameField.setAttribute("id","itemname");
+
+            let itemDescLabel = document.createElement("label");
+            itemDescLabel.setAttribute("for","itemdesc");
+            itemDescLabel.textContent = "Description";
+
+            let itemDescField = document.createElement("input");
+            itemDescField.setAttribute("id","itemdesc");
+
+            let itemDueDateLabel = document.createElement("label");
+            itemDueDateLabel.setAttribute("for","itemduedate");
+            itemDueDateLabel.textContent = "Due Date";
+
+            let itemDueDateField = document.createElement("input");
+            itemDueDateField.setAttribute("id","itemduedate");
+
+            let itemCreateButton = document.createElement("button");
+            itemCreateButton.textContent = "Create item";
+
+            itemContainer.appendChild(itemNameLabel);
+            itemContainer.appendChild(itemNameField);
+            itemContainer.appendChild(itemDescLabel);
+            itemContainer.appendChild(itemDescField);
+            itemContainer.appendChild(itemDueDateLabel);
+            itemContainer.appendChild(itemDueDateField);
+            itemContainer.appendChild(itemCreateButton);
+
+            
+            // create button event listener
+            itemCreateButton.addEventListener("click", function() {
+                submitItemForm(projectID)
+            });
+
+            return itemContainer; 
+
+        }
+    }
+
+    function submitItemForm(projectID) {
+        let itemNameValue = document.querySelector("#itemname").value;
+        let itemDescValue = document.querySelector("#itemdesc").value;
+        let itemDueDateValue = document.querySelector("#itemduedate").value;
+        
+        // call create item
+        TodolistController.createItem(itemNameValue, itemDescValue, projectID, itemDueDateValue);
+
+        // reset form
+        let itemContainer = document.querySelector("#create-item-form");
+        itemContainer.remove();
     }
 
     // modal update project
-    // modal delete project - are you sure?
-
-    // modal create item
     // modal update item
-    
-
-    // create project (call todo controller with info from modal and then redisplay)
-    // create item (call todo controller with info from modal and then redisplay)
+    // modal delete project - are you sure?
 
     // update project (call todo controller with info from modal and then redisplay)
     // update item (call todo controller with info from modal and then redisplay)
@@ -285,5 +348,11 @@ const TodolistController = (function() {
         DisplayController.displayToDoList();
     }
 
-    return {createProject};
+    function createItem(title, description, projectID, dueDate) {
+        let newItem = itemFactory(title, description, projectID, dueDate); 
+        itemList.push(newItem);
+        DisplayController.displayToDoList();
+    }
+
+    return {createProject, createItem};
 })();
