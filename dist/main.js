@@ -121,7 +121,7 @@ const DisplayController = (function() {
             projectInfo.textContent = `PROJECT | ID: ${project.id}, Title: ${project.title}`;
 
             let newItemButton = document.createElement("button");
-            newItemButton.textContent = "New item";
+            newItemButton.textContent = "+";
             newItemButton.addEventListener("click", function() {
                 let createItemForm = showCreateItemForm(project.id);
                 
@@ -132,19 +132,18 @@ const DisplayController = (function() {
             });
 
             let buttonProjectUpdate = document.createElement("button");
-            buttonProjectUpdate.textContent = "update project";
+            buttonProjectUpdate.textContent = "EDIT";
             buttonProjectUpdate.addEventListener("click", function() {
                 showUpdateProjectForm(project.id)
             });
 
             let buttonProjectDelete = document.createElement("button");
-            buttonProjectDelete.textContent = "delete project";
+            buttonProjectDelete.textContent = "DELETE";
             buttonProjectDelete.addEventListener("click", function() {
                 showDeleteProjectForm(project);
             });
             
             projectContainer.appendChild(projectInfo);
-            projectContainer.appendChild(newItemButton);
             projectContainer.appendChild(buttonProjectUpdate);
             projectContainer.appendChild(buttonProjectDelete);
             
@@ -171,14 +170,14 @@ const DisplayController = (function() {
                     iteminfo.textContent = `ITEM | ID: ${item.id}, Title: ${item.title}`;
 
                     let buttonItemUpdate = document.createElement("button");
-                    buttonItemUpdate.textContent = "update item";
+                    buttonItemUpdate.textContent = "edit";
                     buttonItemUpdate.addEventListener("click", function() {
                         showUpdateItemForm(item.id);
                     });
 
 
                     let buttonItemDelete = document.createElement("button");
-                    buttonItemDelete.textContent = "delete item";
+                    buttonItemDelete.textContent = "x";
                     buttonItemDelete.addEventListener("click", function() {
                         submitDeleteItem(item.id)
                     });
@@ -190,6 +189,8 @@ const DisplayController = (function() {
                     projectContainer.appendChild(itemContainer);
                 }
             })
+
+            projectContainer.appendChild(newItemButton);
             todolistContainer.appendChild(projectContainer);
         });
     };
