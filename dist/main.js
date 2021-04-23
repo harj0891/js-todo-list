@@ -139,6 +139,19 @@ const DisplayController = (function() {
                     itemContainer.setAttribute("id", `container-item-${item.id}`);
                     itemContainer.setAttribute("class", 'item');
 
+                    let itemCheckbox = document.createElement("input");
+                    itemCheckbox.setAttribute("id","item-checkbox");
+                    itemCheckbox.setAttribute("type","checkbox");
+                    itemCheckbox.addEventListener("change", function(){
+                        submitUpdateItem(item.id, item.title, item.description, item.dueDate, this.checked);
+                    });
+
+                    if (item.isComplete) {                        
+                        itemContainer.setAttribute("class", 'item completed');
+                        itemCheckbox.checked = true;
+                    }
+
+
                     let iteminfo = document.createElement("p");
                     iteminfo.textContent = `ITEM | ID: ${item.id}, Title: ${item.title}`;
 
@@ -155,7 +168,7 @@ const DisplayController = (function() {
                         submitDeleteItem(item.id)
                     });
 
-                    
+                    itemContainer.appendChild(itemCheckbox);
                     itemContainer.appendChild(iteminfo);
                     itemContainer.appendChild(buttonItemUpdate);
                     itemContainer.appendChild(buttonItemDelete);
@@ -427,7 +440,7 @@ const DisplayController = (function() {
             // update button event listener
             itemUpdateButton.addEventListener("click", function() {
                 let itemId = item.id;
-                submitUpdateItem(itemId, itemNameField.value, itemDescField.value, itemDueDateField.value);
+                submitUpdateItem(itemId, itemNameField.value, itemDescField.value, itemDueDateField.value, item.isComplete);
             });
 
         }
@@ -463,10 +476,10 @@ const DisplayController = (function() {
             displayToDoList();
     }
 
-    function submitUpdateItem(itemId, updatedTitle, updatedDescription, updatedDueDate){
-        TodolistController.updateItem(itemId, updatedTitle, updatedDescription, updatedDueDate);
+    function submitUpdateItem(itemId, updatedTitle, updatedDescription, updatedDueDate, updatedIsComplete){
+        TodolistController.updateItem(itemId, updatedTitle, updatedDescription, updatedDueDate, updatedIsComplete);
         displayToDoList();
-}
+    }
 
     function submitDeleteProject(projectId) {
         TodolistController.deleteProject(projectId);
@@ -552,17 +565,19 @@ const TodolistController = (function() {
             }
         }
 
-        project.title = updatedTitle;
-        project.description = updatedDescription;
-        project.dueDate = updatedDueDate;
-        project.color = updatedColor;
-
-        StorageController.saveProjectArray(projectList);
+        if (project) {
+            project.title = updatedTitle;
+            project.description = updatedDescription;
+            project.dueDate = updatedDueDate;
+            project.color = updatedColor;
+    
+            StorageController.saveProjectArray(projectList);
+        }
+        
     }
 
-
-    function updateItem(itemId, updatedTitle, updatedDescription, updatedDueDate) {
-        // set project
+    function updateItem(itemId, updatedTitle, updatedDescription, updatedDueDate, updatedIsComplete) {
+        // set item
         let itemList = StorageController.readItemArray();
         let item;
         for (let i=0; i < itemList.length; i++) {
@@ -571,11 +586,15 @@ const TodolistController = (function() {
             }
         }
 
-        item.title = updatedTitle;
-        item.description = updatedDescription;
-        item.dueDate = updatedDueDate;
-
-        StorageController.saveItemArray(itemList);
+        if (item) {
+            item.title = updatedTitle;
+            item.description = updatedDescription;
+            item.dueDate = updatedDueDate;
+            item.isComplete = updatedIsComplete;
+    
+            StorageController.saveItemArray(itemList);
+        }
+        
     }
 
     function deleteProject(projectId){
