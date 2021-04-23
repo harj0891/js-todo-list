@@ -1,32 +1,16 @@
-let projectList = [];
-let itemList = [];
-
 const projectFactory = (title, description, dueDate, labelColor) => {
     let id = () => {      
         let nextID;
+        let projectList = StorageController.readProjectArray();
+
         if (projectList.length == 0) {
             nextID = 1; 
             return nextID;
         } else if (projectList.length > 0){
-            nextID = projectList[projectList.length-1].id + 1;
+            let lastID = projectList[projectList.length-1].id
+            nextID = lastID + 1;
             return nextID;
         }
-    }
-
-    function setTitle(newTitle) {
-        this.title = newTitle;
-    }
-
-    function setDescription(newDescription) {
-        this.description = newDescription;
-    }
-
-    function setDueDate(newDueDate) {
-        this.dueDate = newDueDate;
-    }
-       
-    function setLabelColor(newLabelColor) {
-        this.labelColor = newLabelColor;
     }
 
     return {
@@ -34,16 +18,13 @@ const projectFactory = (title, description, dueDate, labelColor) => {
         title: title, 
         description: description, 
         dueDate: dueDate, 
-        labelColor: labelColor,
-        setTitle,
-        setDescription,
-        setDueDate,
-        setLabelColor
+        labelColor: labelColor
     };
 }
 
 const itemFactory = (title, description, project, dueDate) => {
     isComplete = false;
+    let itemList = StorageController.readItemArray();
 
     let id = () => {      
         let nextID;
@@ -51,32 +32,9 @@ const itemFactory = (title, description, project, dueDate) => {
             nextID = 1; 
             return nextID;
         } else if (itemList.length > 0){
-            nextID = itemList[itemList.length-1].id + 1;
+            let lastID = itemList[itemList.length-1].id;
+            nextID = lastID + 1;
             return nextID;
-        }
-    }
-
-    function setTitle (newTitle) {
-        this.title = newTitle;
-    }
-
-    function setDescription(newDescription) {
-        this.description = newDescription;
-    }
-
-    function setProject(newProject) {
-        this.project = newProject;
-    }
-
-    function setDueDate(newDueDate) {
-        this.dueDate = newDueDate;
-    }
-
-    function setIsComplete (newIsComplete) {
-        if (newIsComplete) {
-            this.isComplete = true;
-        } else {
-            this.isComplete = false;
         }
     }
 
@@ -86,42 +44,46 @@ const itemFactory = (title, description, project, dueDate) => {
         description: description, 
         dueDate: dueDate,
         project: project, 
-        isComplete: isComplete,
-        setTitle, 
-        setDescription, 
-        setProject, 
-        setDueDate, 
-        setIsComplete
+        isComplete: isComplete
     };
 }
 
-// mock data
-(function createMockData() {
-    let newProject = projectFactory("Default", "Default project", "test", "Grey"); 
-    projectList.push(newProject);
 
-    let newProject2 = projectFactory("Default2", "Default project2", "test2", "Grey2"); 
-    projectList.push(newProject2);
+const StorageController = (function() { 
+    function readProjectArray() {
+        let projects = JSON.parse(localStorage.getItem("projects") || "[]");
+        if (projects.length > 0) {
+            projects.forEach(project => {
+                Object.assign(projectFactory, project);
+            });      
+        }
+        return projects;
+    }
 
-    let newProject3 = projectFactory("Default3", "Default project3", "test3", "Grey3"); 
-    projectList.push(newProject3);
+    function readItemArray() {
+        let items = JSON.parse(localStorage.getItem("items") || "[]");
+        if (items.length > 0) {
+            items.forEach(item => {
+                Object.assign(itemFactory, item);
+            });      
+        }
+        return items;
+    }
+    
+    function saveProjectArray(projects) {
+        localStorage.setItem("projects", JSON.stringify(projects));
+    }
 
-    let newItem = itemFactory("Item1", "item 1 desc", 1, "test"); 
-    itemList.push(newItem);
+    function saveItemArray(items) {
+        localStorage.setItem("items", JSON.stringify(items));
+    }
+    
+    return {readProjectArray, readItemArray, saveProjectArray, saveItemArray};
 
-    let newItem2 = itemFactory("Item2", "item 2 desc", 1, "test"); 
-    itemList.push(newItem2);
-
-    let newItem3 = itemFactory("Item3", "item 3 desc", 2, "test"); 
-    itemList.push(newItem3);
 })();
 
 
-
 const DisplayController = (function() {
-    // init display
-    displayToDoList();
-
     // button event listeners
     let newProjectButton = document.querySelector("#create-project");
     newProjectButton.addEventListener("click", function() {
@@ -130,6 +92,9 @@ const DisplayController = (function() {
     });
 
     function displayToDoList() {
+        let projectList = StorageController.readProjectArray();
+        let itemList = StorageController.readItemArray();
+
         let todolistContainer = document.querySelector("#container-todolist");
         todolistContainer.innerHTML = "";
     
@@ -317,6 +282,7 @@ const DisplayController = (function() {
 
     function showUpdateProjectForm(projectID) {
         // set project
+        let projectList = StorageController.readProjectArray();
         let project;
         for (let i=0; i < projectList.length; i++) {
             if (projectList[i].id == projectID) {
@@ -395,6 +361,7 @@ const DisplayController = (function() {
 
     function showUpdateItemForm(itemID) {
         // set item
+        let itemList = StorageController.readItemArray();
         let item;
         for (let i=0; i < itemList.length; i++) {
             if (itemList[i].id == itemID) {
@@ -516,19 +483,68 @@ const DisplayController = (function() {
 })();
 
 
-const TodolistController = (function() { 
+const TodolistController = (function() {
+    
+    // mock data
+    (function createMockData() {
+        let projectList = StorageController.readProjectArray();
+        let itemList = StorageController.readItemArray();
+
+        if (projectList.length == 0) {
+            let newProject = projectFactory("Default", "Default project", "test", "Grey"); 
+            projectList.push(newProject);
+            StorageController.saveProjectArray(projectList);
+    
+            let newProject2 = projectFactory("Default2", "Default project2", "test2", "Grey2"); 
+            projectList.push(newProject2);
+            StorageController.saveProjectArray(projectList);
+    
+            let newProject3 = projectFactory("Default3", "Default project3", "test3", "Grey3"); 
+            projectList.push(newProject3);
+            StorageController.saveProjectArray(projectList);
+
+        }
+
+       
+        if (itemList.length == 0) {
+            let newItem = itemFactory("Item1", "item 1 desc", 1, "test"); 
+            itemList.push(newItem);
+            StorageController.saveItemArray(itemList);
+    
+            let newItem2 = itemFactory("Item2", "item 2 desc", 1, "test"); 
+            itemList.push(newItem2);
+            StorageController.saveItemArray(itemList);
+    
+            let newItem3 = itemFactory("Item3", "item 3 desc", 2, "test"); 
+            itemList.push(newItem3);
+            StorageController.saveItemArray(itemList);
+
+        }      
+        
+    })();
+
+    
+    // init display
+    DisplayController.displayToDoList();
+
     function createProject(title, description, dueDate, color) {
         let newProject = projectFactory(title, description, dueDate, color); 
+
+        let projectList = StorageController.readProjectArray();
         projectList.push(newProject);
+        StorageController.saveProjectArray(projectList);
     }
 
     function createItem(title, description, projectID, dueDate) {
         let newItem = itemFactory(title, description, projectID, dueDate); 
+        let itemList = StorageController.readItemArray();
         itemList.push(newItem);
+        StorageController.saveItemArray(itemList);
     }
 
     function updateProject(projectId, updatedTitle, updatedDescription, updatedDueDate, updatedColor) {
         // set project
+        let projectList = StorageController.readProjectArray();
         let project;
         for (let i=0; i < projectList.length; i++) {
             if (projectList[i].id == projectId) {
@@ -536,15 +552,18 @@ const TodolistController = (function() {
             }
         }
 
-        project.setTitle(updatedTitle);
-        project.setDescription(updatedDescription);
-        project.setDueDate(updatedDueDate);
-        project.setLabelColor(updatedColor);
+        project.title = updatedTitle;
+        project.description = updatedDescription;
+        project.dueDate = updatedDueDate;
+        project.color = updatedColor;
+
+        StorageController.saveProjectArray(projectList);
     }
 
 
     function updateItem(itemId, updatedTitle, updatedDescription, updatedDueDate) {
         // set project
+        let itemList = StorageController.readItemArray();
         let item;
         for (let i=0; i < itemList.length; i++) {
             if (itemList[i].id == itemId) {
@@ -552,12 +571,16 @@ const TodolistController = (function() {
             }
         }
 
-        item.setTitle(updatedTitle);
-        item.setDescription(updatedDescription);
-        item.setDueDate(updatedDueDate);
+        item.title = updatedTitle;
+        item.description = updatedDescription;
+        item.dueDate = updatedDueDate;
+
+        StorageController.saveItemArray(itemList);
     }
 
     function deleteProject(projectId){
+        let projectList = StorageController.readProjectArray();
+        let itemList = StorageController.readItemArray();
 
         // delete associated items
         for(var i = 0; i < itemList.length; i++){ 
@@ -575,15 +598,24 @@ const TodolistController = (function() {
                 projectList.splice(i, 1); 
             }
         }
+
+        StorageController.saveProjectArray(projectList);
+        StorageController.saveItemArray(itemList);
     }
 
     function deleteItem(itemId) {
+        let itemList = StorageController.readItemArray();
         for( var i = 0; i < itemList.length; i++){ 
             if (itemList[i].id === itemId) { 
                 itemList.splice(i, 1); 
             }
         }
+
+        StorageController.saveItemArray(itemList);
     }
 
     return {createProject, createItem, updateProject, updateItem, deleteProject, deleteItem};
 })();
+
+
+
