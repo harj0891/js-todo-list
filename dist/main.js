@@ -102,6 +102,21 @@ const DisplayController = (function() {
             let projectContainer = document.createElement("section");
             projectContainer.setAttribute("id", `container-project-${project.id}`);
 
+            switch (project.labelColor) {
+                case ("grey"):
+                    projectContainer.setAttribute("class", "label-grey");
+                    break;
+                case ("blue"):
+                    projectContainer.setAttribute("class", "label-blue");
+                    break;
+                case ("red"):
+                    projectContainer.setAttribute("class", "label-red");
+                    break;
+                case ("green"):
+                    projectContainer.setAttribute("class", "label-green");
+                    break;
+            }
+
             let projectInfo = document.createElement("p");
             projectInfo.textContent = `PROJECT | ID: ${project.id}, Title: ${project.title}`;
 
@@ -125,7 +140,7 @@ const DisplayController = (function() {
             let buttonProjectDelete = document.createElement("button");
             buttonProjectDelete.textContent = "delete project";
             buttonProjectDelete.addEventListener("click", function() {
-                submitDeleteProject(project.id)
+                showDeleteProjectForm(project);
             });
             
             projectContainer.appendChild(projectInfo);
@@ -216,8 +231,29 @@ const DisplayController = (function() {
             projectColorLabel.setAttribute("for","pcolor");
             projectColorLabel.textContent = "Colour";
 
-            let projectColorField = document.createElement("input");
+            let projectColorField = document.createElement("select");
             projectColorField.setAttribute("id","pcolor");
+
+            let colorGrey = document.createElement("option");
+            colorGrey.setAttribute("value","grey");
+            colorGrey.textContent = "Grey";
+
+            let colorBlue = document.createElement("option");
+            colorBlue.setAttribute("value","blue");
+            colorBlue.textContent = "Blue";
+
+            let colorRed = document.createElement("option");
+            colorRed.setAttribute("value","red");
+            colorRed.textContent = "Red";
+
+            let colorGreen = document.createElement("option");
+            colorGreen.setAttribute("value","green");
+            colorGreen.textContent = "Green";
+
+            projectColorField.appendChild(colorGrey);
+            projectColorField.appendChild(colorBlue);
+            projectColorField.appendChild(colorRed);
+            projectColorField.appendChild(colorGreen);
 
             let projectCreateButton = document.createElement("button");
             projectCreateButton.textContent = "Create project";
@@ -342,9 +378,45 @@ const DisplayController = (function() {
             projectColorLabel.setAttribute("for","pcolor");
             projectColorLabel.textContent = "Colour";
 
-            let projectColorField = document.createElement("input");
+            let projectColorField = document.createElement("select");
             projectColorField.setAttribute("id","pcolor");
-            projectColorField.value = project.labelColor;
+
+            let optionGrey = document.createElement("option");
+            optionGrey.setAttribute("value","grey");
+            optionGrey.textContent = "Grey";
+
+            let optionBlue = document.createElement("option");
+            optionBlue.setAttribute("value","blue");
+            optionBlue.textContent = "Blue";
+
+            let optionRed = document.createElement("option");
+            optionRed.setAttribute("value","red");
+            optionRed.textContent = "Red";
+
+            let optionGreen = document.createElement("option");
+            optionGreen.setAttribute("value","green");
+            optionGreen.textContent = "Green";
+
+            projectColorField.appendChild(optionGrey);
+            projectColorField.appendChild(optionBlue);
+            projectColorField.appendChild(optionRed);
+            projectColorField.appendChild(optionGreen);
+
+            switch (project.labelColor) {
+                case ("grey"):
+                    optionGrey.setAttribute("selected", "selected");
+                    break;
+                case ("blue"):
+                    optionBlue.setAttribute("selected", "selected");
+                    break;
+                case ("red"):
+                    optionRed.setAttribute("selected", "selected");
+                    break;
+                case ("green"):
+                    optionGreen.setAttribute("selected", "selected");
+                    break;
+            }
+            
 
             let projectUpdateButton = document.createElement("button");
             projectUpdateButton.textContent = "Update project";
@@ -366,6 +438,7 @@ const DisplayController = (function() {
             // update button event listener
             projectUpdateButton.addEventListener("click", function() {
                 let projectId = project.id;
+                
                 submitUpdateProject(projectId, projectNameField.value, projectDescField.value, projectDueDateField.value, projectColorField.value);
                 
             });
@@ -446,6 +519,55 @@ const DisplayController = (function() {
         }
     }    
 
+    function showDeleteProjectForm(project){
+        let todolistContainer = document.querySelector("#container-todolist");
+
+        let modalExists = document.querySelector("#delete-project-modal");
+        if (modalExists) {
+            return false;
+        }
+        
+        let modalContainer = document.createElement("section");
+        modalContainer.setAttribute("id", "delete-project-modal");
+        modalContainer.setAttribute("class", "modal");
+
+        let modalContent = document.createElement("section");
+        modalContent.setAttribute("class", "modal-content");
+
+
+        let deleteMessage = document.createElement("p");
+        deleteMessage.textContent = `Are you sure you want to delete ${project.title}`;
+
+        let confirmButton = document.createElement("button");
+        confirmButton.textContent = "Yes";
+        confirmButton.addEventListener ("click", function() {
+            submitDeleteProject(project.id)
+        });
+
+        let cancelButton = document.createElement("button");
+        cancelButton.textContent = "No";
+        cancelButton.addEventListener("click", function() {
+            closeDeleteProjectForm();
+        });
+        
+        modalContent.appendChild(deleteMessage);
+        modalContent.appendChild(confirmButton);
+        modalContent.appendChild(cancelButton);
+        modalContainer.appendChild(modalContent);
+        todolistContainer.appendChild(modalContainer);
+
+        window.onclick = function(event) {
+            if (event.target == modalContainer) {
+                closeDeleteProjectForm();
+            }
+        }
+    }
+
+    function closeDeleteProjectForm() {
+        let deleteProjectModal = document.querySelector("#delete-project-modal");
+        deleteProjectModal.remove();
+    }
+
     function submitCreateProject() {
         let projectNameValue = document.querySelector("#pname").value;
         let projectDescValue = document.querySelector("#pdesc").value;
@@ -459,7 +581,7 @@ const DisplayController = (function() {
         // reset form
         let projectContainer = document.querySelector("#create-project-form");
         projectContainer.remove();
-}
+    }
 
     function submitCreateItem(projectID) {
         let itemNameValue = document.querySelector("#itemname").value;
@@ -504,15 +626,15 @@ const TodolistController = (function() {
         let itemList = StorageController.readItemArray();
 
         if (projectList.length == 0) {
-            let newProject = projectFactory("Default", "Default project", "test", "Grey"); 
+            let newProject = projectFactory("Default", "Default project", "test", "grey"); 
             projectList.push(newProject);
             StorageController.saveProjectArray(projectList);
     
-            let newProject2 = projectFactory("Default2", "Default project2", "test2", "Grey2"); 
+            let newProject2 = projectFactory("Default2", "Default project2", "test2", "blue"); 
             projectList.push(newProject2);
             StorageController.saveProjectArray(projectList);
     
-            let newProject3 = projectFactory("Default3", "Default project3", "test3", "Grey3"); 
+            let newProject3 = projectFactory("Default3", "Default project3", "test3", "red"); 
             projectList.push(newProject3);
             StorageController.saveProjectArray(projectList);
 
@@ -569,7 +691,7 @@ const TodolistController = (function() {
             project.title = updatedTitle;
             project.description = updatedDescription;
             project.dueDate = updatedDueDate;
-            project.color = updatedColor;
+            project.labelColor = updatedColor;
     
             StorageController.saveProjectArray(projectList);
         }
@@ -606,8 +728,6 @@ const TodolistController = (function() {
             
             if (itemList[i].project == projectId) { 
                 deleteItem(itemList[i].id);
-                // recursive call 
-                deleteProject(projectId);
             }
         }
 
@@ -619,13 +739,12 @@ const TodolistController = (function() {
         }
 
         StorageController.saveProjectArray(projectList);
-        StorageController.saveItemArray(itemList);
     }
 
     function deleteItem(itemId) {
         let itemList = StorageController.readItemArray();
         for( var i = 0; i < itemList.length; i++){ 
-            if (itemList[i].id === itemId) { 
+            if (itemList[i].id == itemId) { 
                 itemList.splice(i, 1); 
             }
         }

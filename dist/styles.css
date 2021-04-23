@@ -1,3 +1,43 @@
 .item *{
     display: inline;
 }
+
+
+.modal {
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+    position: fixed;   
+    left: 0;
+    padding-top: 100px; /* Location of the box */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    top: 0;
+    width: 100%; /* Full width */
+    z-index: 1;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 20%;
+}
+
+.label-grey {
+    background-color: hsl(0, 0%, 73%);
+
+}
+
+.label-blue {
+    background-color: hsl(221, 30%, 73%);
+    
+}
+
+.label-red {
+    background-color: hsl(0, 30%, 73%);
+    
+}
+
+.label-green {
+    background-color: hsl(114, 30%, 73%);
+}
