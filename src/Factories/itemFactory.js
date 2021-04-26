@@ -8,10 +8,11 @@
 - heading (can only belong to 1 heading, CAN be changed)
 */
 
-let itemList = [];
+import StorageController from '../Controllers/storageController';
 
 const itemFactory = (title, description, project, dueDate) => {
-    isComplete = false;
+    let isComplete = false;
+    let itemList = StorageController.readItemArray();
 
     let id = () => {      
         let nextID;
@@ -19,32 +20,9 @@ const itemFactory = (title, description, project, dueDate) => {
             nextID = 1; 
             return nextID;
         } else if (itemList.length > 0){
-            nextID = itemList[itemList.length-1].id + 1;
+            let lastID = itemList[itemList.length-1].id;
+            nextID = lastID + 1;
             return nextID;
-        }
-    }
-
-    function setTitle (newTitle) {
-        this.title = newTitle;
-    }
-
-    function setDescription(newDescription) {
-        this.description = newDescription;
-    }
-
-    function setProject(newProject) {
-        this.project = newProject;
-    }
-
-    function setDueDate(newDueDate) {
-        this.dueDate = newDueDate;
-    }
-
-    function setIsComplete (newIsComplete) {
-        if (newIsComplete) {
-            this.isComplete = true;
-        } else {
-            this.isComplete = false;
         }
     }
 
@@ -54,12 +32,8 @@ const itemFactory = (title, description, project, dueDate) => {
         description: description, 
         dueDate: dueDate,
         project: project, 
-        isComplete: isComplete,
-        setTitle, 
-        setDescription, 
-        setProject, 
-        setDueDate, 
-        setIsComplete
+        isComplete: isComplete
     };
 }
-export {itemFactory, itemList};
+
+export default itemFactory;

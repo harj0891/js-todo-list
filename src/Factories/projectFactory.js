@@ -7,33 +7,21 @@
 - labelColor (optional) -- will change project label color
 */
 
-let projectList = [];
+import StorageController from '../Controllers/storageController';
 
 const projectFactory = (title, description, dueDate, labelColor) => {
-    id = () => {      
+    let id = () => {      
         let nextID;
+        let projectList = StorageController.readProjectArray();
+
         if (projectList.length == 0) {
             nextID = 1; 
+            return nextID;
         } else if (projectList.length > 0){
-            nextID = projectList[projectList.length-1].id + 1;
+            let lastID = projectList[projectList.length-1].id
+            nextID = lastID + 1;
+            return nextID;
         }
-        return nextID;
-    }
-
-    function setTitle(newTitle) {
-        this.title = newTitle;
-    }
-
-    function setDescription(newDescription) {
-        this.description = newDescription;
-    }
-
-    function setDueDate(newDueDate) {
-        this.dueDate = newDueDate;
-    }
-       
-    function setLabelColor(newLabelColor) {
-        this.labelColor = newLabelColor;
     }
 
     return {
@@ -41,15 +29,9 @@ const projectFactory = (title, description, dueDate, labelColor) => {
         title: title, 
         description: description, 
         dueDate: dueDate, 
-        labelColor: labelColor,
-        setTitle,
-        setDescription,
-        setDueDate,
-        setLabelColor
+        labelColor: labelColor
     };
 }
 
-export {projectFactory, projectList};
 
-
-
+export default projectFactory;
