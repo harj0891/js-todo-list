@@ -2,18 +2,9 @@ import TodolistController from './toDoListController';
 import StorageController from './storageController';
 
 const DisplayController = (function() {
-    // button event listeners
-    let newProjectButton = document.querySelector("#create-project");
-    newProjectButton.addEventListener("click", function() {
-        showCreateProjectForm();
-    
-    });
-
-    function displayToDoList() {
+    function displayProjects() {
         let projectList = StorageController.readProjectArray();
-        let itemList = StorageController.readItemArray();
-
-        let todolistContainer = document.querySelector("#container-todolist");
+        let todolistContainer = document.querySelector("#container-navigation");
         todolistContainer.innerHTML = "";
     
         projectList.forEach(project => {
@@ -36,18 +27,7 @@ const DisplayController = (function() {
             }
 
             let projectInfo = document.createElement("p");
-            projectInfo.textContent = `Project: ${project.title} Description: ${project.description} Due: ${project.dueDate}`;
-
-            let newItemButton = document.createElement("button");
-            newItemButton.textContent = "+";
-            newItemButton.addEventListener("click", function() {
-                let createItemForm = showCreateItemForm(project.id);
-                
-                if (createItemForm) {
-                    projectContainer.appendChild(createItemForm);
-                }
-                
-            });
+            projectInfo.textContent = `${project.title} Description: ${project.description} Due: ${project.dueDate}`;
 
             let buttonProjectUpdate = document.createElement("button");
             buttonProjectUpdate.textContent = "EDIT";
@@ -60,57 +40,103 @@ const DisplayController = (function() {
             buttonProjectDelete.addEventListener("click", function() {
                 showDeleteProjectForm(project);
             });
-            
             projectContainer.appendChild(projectInfo);
             projectContainer.appendChild(buttonProjectUpdate);
             projectContainer.appendChild(buttonProjectDelete);
             
-            itemList.forEach(item => {
-                if (item.project == project.id) {
-                    let itemContainer = document.createElement("section");
-                    itemContainer.setAttribute("id", `container-item-${item.id}`);
-                    itemContainer.setAttribute("class", 'item');
-
-                    let itemCheckbox = document.createElement("input");
-                    itemCheckbox.setAttribute("id","item-checkbox");
-                    itemCheckbox.setAttribute("type","checkbox");
-                    itemCheckbox.addEventListener("change", function(){
-                        submitUpdateItem(item.id, item.title, item.description, item.dueDate, this.checked);
-                    });
-
-                    if (item.isComplete) {                        
-                        itemContainer.setAttribute("class", 'item completed');
-                        itemCheckbox.checked = true;
-                    }
-
-
-                    let iteminfo = document.createElement("p");
-                    iteminfo.textContent = `Task: ${item.title} Description: ${item.description} Due: ${item.dueDate}`;
-
-                    let buttonItemUpdate = document.createElement("button");
-                    buttonItemUpdate.textContent = "edit";
-                    buttonItemUpdate.addEventListener("click", function() {
-                        showUpdateItemForm(item.id);
-                    });
-
-
-                    let buttonItemDelete = document.createElement("button");
-                    buttonItemDelete.textContent = "x";
-                    buttonItemDelete.addEventListener("click", function() {
-                        submitDeleteItem(item.id)
-                    });
-
-                    itemContainer.appendChild(itemCheckbox);
-                    itemContainer.appendChild(iteminfo);
-                    itemContainer.appendChild(buttonItemUpdate);
-                    itemContainer.appendChild(buttonItemDelete);
-                    projectContainer.appendChild(itemContainer);
-                }
+            projectContainer.addEventListener("click", function() {
+                displayToDoList(project.id);
             })
 
-            projectContainer.appendChild(newItemButton);
             todolistContainer.appendChild(projectContainer);
         });
+
+        let buttonProjectCreate = document.createElement("button");
+        buttonProjectCreate.textContent = "NEW PROJECT";
+        buttonProjectCreate.addEventListener("click", function() {
+            showCreateProjectForm();
+        });
+
+        todolistContainer.appendChild(buttonProjectCreate);
+    };
+
+    function displayToDoList(projectId) {
+        let projectList = StorageController.readProjectArray();
+        let itemList = StorageController.readItemArray();
+        let project;
+
+        for (let i=0; i < projectList.length; i++) {
+            if (projectId == null) {
+                projectId = projectList[i].id;
+            }
+
+            if (projectList[i].id == projectId) {
+                project = projectList[i];
+            }
+        }
+
+        let todolistContainer = document.querySelector("#container-todolist");
+        todolistContainer.innerHTML = "";
+        let projectItemContainer = document.createElement("section");
+        projectItemContainer.setAttribute("id", `container-project-${project.id}`);
+        
+        itemList.forEach(item => {
+            if (item.project == project.id) {
+                let itemContainer = document.createElement("section");
+                itemContainer.setAttribute("id", `container-item-${item.id}`);
+                itemContainer.setAttribute("class", 'item');
+
+                let itemCheckbox = document.createElement("input");
+                itemCheckbox.setAttribute("id","item-checkbox");
+                itemCheckbox.setAttribute("type","checkbox");
+                itemCheckbox.addEventListener("change", function(){
+                    submitUpdateItem(item.project, item.id, item.title, item.description, item.dueDate, this.checked);
+                });
+
+                if (item.isComplete) {                        
+                    itemContainer.setAttribute("class", 'item completed');
+                    itemCheckbox.checked = true;
+                }
+
+
+                let iteminfo = document.createElement("p");
+                iteminfo.textContent = `${item.title} Description: ${item.description} Due: ${item.dueDate}`;
+
+                let buttonItemUpdate = document.createElement("button");
+                buttonItemUpdate.textContent = "edit";
+                buttonItemUpdate.addEventListener("click", function() {
+                    showUpdateItemForm(item.id);
+                });
+
+
+                let buttonItemDelete = document.createElement("button");
+                buttonItemDelete.textContent = "x";
+                buttonItemDelete.addEventListener("click", function() {
+                    submitDeleteItem(item.project, item.id)
+                });
+
+                itemContainer.appendChild(itemCheckbox);
+                itemContainer.appendChild(iteminfo);
+                itemContainer.appendChild(buttonItemUpdate);
+                itemContainer.appendChild(buttonItemDelete);
+                projectItemContainer.appendChild(itemContainer);
+            }
+        })
+
+        let newItemButton = document.createElement("button");
+        newItemButton.textContent = "+";
+        newItemButton.addEventListener("click", function() {
+            let createItemForm = showCreateItemForm(project.id);
+            
+            if (createItemForm) {
+                projectItemContainer.appendChild(createItemForm);
+            }
+            
+        });
+
+        projectItemContainer.appendChild(newItemButton);
+        todolistContainer.appendChild(projectItemContainer);
+
     };
 
     function showCreateProjectForm() {
@@ -436,14 +462,15 @@ const DisplayController = (function() {
             // update button event listener
             itemUpdateButton.addEventListener("click", function() {
                 let itemId = item.id;
-                submitUpdateItem(itemId, itemNameField.value, itemDescField.value, itemDueDateField.value, item.isComplete);
+                submitUpdateItem(item.project, itemId, itemNameField.value, itemDescField.value, itemDueDateField.value, item.isComplete);
             });
 
         }
     }    
 
     function showDeleteProjectForm(project){
-        let todolistContainer = document.querySelector("#container-todolist");
+
+        let mainContainer = document.querySelector("#container");
 
         let modalExists = document.querySelector("#delete-project-modal");
         if (modalExists) {
@@ -464,7 +491,8 @@ const DisplayController = (function() {
         let confirmButton = document.createElement("button");
         confirmButton.textContent = "Yes";
         confirmButton.addEventListener ("click", function() {
-            submitDeleteProject(project.id)
+            submitDeleteProject(project.id);
+            closeDeleteProjectForm();
         });
 
         let cancelButton = document.createElement("button");
@@ -477,7 +505,7 @@ const DisplayController = (function() {
         modalContent.appendChild(confirmButton);
         modalContent.appendChild(cancelButton);
         modalContainer.appendChild(modalContent);
-        todolistContainer.appendChild(modalContainer);
+        mainContainer.appendChild(modalContainer);
 
         window.onclick = function(event) {
             if (event.target == modalContainer) {
@@ -499,44 +527,42 @@ const DisplayController = (function() {
 
         // call create project
         TodolistController.createProject(projectNameValue, projectDescValue, projectDueDateValue, projectColorValue);
-        displayToDoList();
+        displayProjects();
 
-        // reset form
-        let projectContainer = document.querySelector("#create-project-form");
-        projectContainer.remove();
     }
 
-    function submitCreateItem(projectID) {
+    function submitCreateItem(projectId) {
         let itemNameValue = document.querySelector("#itemname").value;
         let itemDescValue = document.querySelector("#itemdesc").value;
         let itemDueDateValue = document.querySelector("#itemduedate").value;
         
         // call create item
-        TodolistController.createItem(itemNameValue, itemDescValue, projectID, itemDueDateValue);
-        displayToDoList();
+        TodolistController.createItem(itemNameValue, itemDescValue, projectId, itemDueDateValue);
+        displayToDoList(projectId);
     }
 
     function submitUpdateProject(projectId, updatedTitle, updatedDescription, updatedDueDate, updatedColor){
             TodolistController.updateProject(projectId, updatedTitle, updatedDescription, updatedDueDate, updatedColor);
-            displayToDoList();
+            displayProjects();
     }
 
-    function submitUpdateItem(itemId, updatedTitle, updatedDescription, updatedDueDate, updatedIsComplete){
+    function submitUpdateItem(projectId, itemId, updatedTitle, updatedDescription, updatedDueDate, updatedIsComplete){
         TodolistController.updateItem(itemId, updatedTitle, updatedDescription, updatedDueDate, updatedIsComplete);
-        displayToDoList();
+        displayToDoList(projectId);
     }
 
     function submitDeleteProject(projectId) {
         TodolistController.deleteProject(projectId);
+        displayProjects();
         displayToDoList();
     }
 
-    function submitDeleteItem(itemId) {
+    function submitDeleteItem(projectId, itemId) {
         TodolistController.deleteItem(itemId);
-        displayToDoList();
+        displayToDoList(projectId);
     }
 
-    return {displayToDoList};
+    return {displayProjects, displayToDoList};
 
 })();
 

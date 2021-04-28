@@ -45,7 +45,8 @@ const TodolistController = (function() {
 
     
     // init display
-    DisplayController.displayToDoList();
+    DisplayController.displayProjects();
+    DisplayController.displayToDoList(1);
 
     function createProject(title, description, dueDate, color) {
         let newProject = projectFactory(title, description, dueDate, color); 
@@ -150,6 +151,8 @@ const TodolistController = (function() {
 //     function changeItemOrder() {
 //         // read projects in list and update ordering (splice and then +1 to any after)
 //     }
+
+
 
     return {createProject, createItem, updateProject, updateItem, deleteProject, deleteItem};
 })();
