@@ -14,7 +14,7 @@ body {
 }
 
 .header{
-    background-color: rgb(26, 26, 26);
+    background-color: rgb(15, 15, 15);
 }
 
 .title{
@@ -23,24 +23,24 @@ body {
 
 .main {
     display:grid;
-    grid-template-columns: 250px auto;
+    grid-template-columns: 200px auto;
     height: calc(100vh - 67px);
 }
 
 
 .navigation {
-    background-color: rgb(26, 26, 26);
+    background-color: rgb(15, 15, 15);
     top: 100px;
     bottom: 0;
 }
 
 .project {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding: 20px;
+    /* padding-bottom: 20px; */
 }
 
 .project p {
-    margin: 10px 5px;
+    margin: 10px 0;
 
 }
 
@@ -54,8 +54,16 @@ body {
 .button {
     border: none;
     border-radius: none;
-    margin: 10px 5px;
+    margin: 10px 0;
     padding: 5px 10px;
+}
+
+.button.project.delete, .button.item.update, .button.item.delete {
+    margin-left: 10px;
+}
+
+.button.project.create {
+    margin: 20px;
 }
 
 .todolist{
@@ -100,7 +108,7 @@ body {
     width: 20%;
 }
 
-.modal-content p,label {
+.modal-content.p, .modal-content.label {
     color:black;
 }
 
@@ -113,33 +121,33 @@ body {
 
 
 .project.grey {
-    background-color: hsl(0, 0%, 20%);
-}
-
-.project.blue {
-    background-color: hsl(221, 20%, 20%);
-}
-
-.project.red {
-    background-color: hsl(0, 20%, 20%);
-}
-
-.project.green {
-    background-color: hsl(114, 20%, 20%);
-}
-
-.todolist.grey {
     background-color: hsl(0, 0%, 15%);
 }
 
-.todolist.blue {
+.project.blue {
     background-color: hsl(221, 20%, 15%);
 }
 
-.todolist.red {
+.project.red {
     background-color: hsl(0, 20%, 15%);
 }
 
+.project.green {
+    background-color: hsl(114, 20%, 15%);
+}
+
+.todolist.grey {
+    background-color: hsl(0, 0%, 10%);
+}
+
+.todolist.blue {
+    background-color: hsl(221, 20%, 10%);
+}
+
+.todolist.red {
+    background-color: hsl(0, 20%, 10%);
+}
+
 .todolist.green {
-    background-color: hsl(116, 20%, 15%);
+    background-color: hsl(116, 20%, 10%);
 }
