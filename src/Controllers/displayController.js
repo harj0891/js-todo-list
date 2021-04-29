@@ -13,29 +13,47 @@ const DisplayController = (function() {
 
             switch (project.labelColor) {
                 case ("grey"):
-                    projectContainer.setAttribute("class", "label-grey");
+                    projectContainer.setAttribute("class", "project grey");
                     break;
                 case ("blue"):
-                    projectContainer.setAttribute("class", "label-blue");
+                    projectContainer.setAttribute("class", "project blue");
                     break;
                 case ("red"):
-                    projectContainer.setAttribute("class", "label-red");
+                    projectContainer.setAttribute("class", "project red");
                     break;
                 case ("green"):
-                    projectContainer.setAttribute("class", "label-green");
+                    projectContainer.setAttribute("class", "project green");
                     break;
             }
 
-            let projectInfo = document.createElement("p");
-            projectInfo.textContent = `${project.title} Description: ${project.description} Due: ${project.dueDate}`;
+            let projectInfo = document.createElement("section");
+
+            let projectTitle = document.createElement("p");
+            projectTitle.setAttribute("class","project-title");
+            projectTitle.textContent = project.title;
+
+            let projectDescription = document.createElement("p");
+            projectDescription.setAttribute("class","project-description");
+            projectDescription.textContent = project.description;
+
+            let projectDueDate = document.createElement("p");
+            projectDueDate.setAttribute("class","project-duedate");
+            projectDueDate.textContent = project.dueDate;
+
+            projectInfo.appendChild(projectTitle);
+            projectInfo.appendChild(projectDescription);
+            projectInfo.appendChild(projectDueDate);
+
 
             let buttonProjectUpdate = document.createElement("button");
+            buttonProjectUpdate.setAttribute("class", "button project update");
             buttonProjectUpdate.textContent = "EDIT";
             buttonProjectUpdate.addEventListener("click", function() {
                 showUpdateProjectForm(project.id)
             });
 
             let buttonProjectDelete = document.createElement("button");
+            buttonProjectDelete.setAttribute("class", "button project delete");
             buttonProjectDelete.textContent = "DELETE";
             buttonProjectDelete.addEventListener("click", function() {
                 showDeleteProjectForm(project);
@@ -52,6 +70,7 @@ const DisplayController = (function() {
         });
 
         let buttonProjectCreate = document.createElement("button");
+        buttonProjectCreate.setAttribute("class", "button project create");
         buttonProjectCreate.textContent = "NEW PROJECT";
         buttonProjectCreate.addEventListener("click", function() {
             showCreateProjectForm();
@@ -79,6 +98,7 @@ const DisplayController = (function() {
         todolistContainer.innerHTML = "";
         let projectItemContainer = document.createElement("section");
         projectItemContainer.setAttribute("id", `container-project-${project.id}`);
+        todolistContainer.setAttribute("class",`todolist ${project.labelColor}`);
         
         itemList.forEach(item => {
             if (item.project == project.id) {
@@ -99,10 +119,23 @@ const DisplayController = (function() {
                 }
 
 
-                let iteminfo = document.createElement("p");
-                iteminfo.textContent = `${item.title} Description: ${item.description} Due: ${item.dueDate}`;
+                let iteminfo = document.createElement("section");
+                
+                let itemTitle = document.createElement("p");
+                itemTitle.textContent = item.title;
+
+                let itemDescription = document.createElement("p");
+                itemDescription.textContent = ` - ${item.description}`;
+
+                let itemDueDate = document.createElement("p");
+                itemDueDate.textContent = ` - ${item.dueDate}`;
+
+                iteminfo.appendChild(itemTitle);
+                iteminfo.appendChild(itemDescription);
+                iteminfo.appendChild(itemDueDate);
 
                 let buttonItemUpdate = document.createElement("button");
+                buttonItemUpdate.setAttribute("class", "button item update");
                 buttonItemUpdate.textContent = "edit";
                 buttonItemUpdate.addEventListener("click", function() {
                     showUpdateItemForm(item.id);
@@ -110,6 +143,7 @@ const DisplayController = (function() {
 
 
                 let buttonItemDelete = document.createElement("button");
+                buttonItemDelete.setAttribute("class", "button item delete");
                 buttonItemDelete.textContent = "x";
                 buttonItemDelete.addEventListener("click", function() {
                     submitDeleteItem(item.project, item.id)
@@ -124,6 +158,7 @@ const DisplayController = (function() {
         })
 
         let newItemButton = document.createElement("button");
+        newItemButton.setAttribute("class", "button item create");
         newItemButton.textContent = "+";
         newItemButton.addEventListener("click", function() {
             let createItemForm = showCreateItemForm(project.id);
@@ -140,16 +175,20 @@ const DisplayController = (function() {
     };
 
     function showCreateProjectForm() {
-        let navigationContainer = document.querySelector("#container-navigation");
+        let mainContainer = document.querySelector("#container");
 
         // check if form already exists 
-        let alreadyExists = document.querySelector("#create-project-form");
+        let alreadyExists = document.querySelector("#create-project-modal");
         if (alreadyExists) {
             console.log("project create form already open");
             // do nothing
         } else {
+            let modalContainer = document.createElement("section");
+            modalContainer.setAttribute("id","create-project-modal");
+            modalContainer.setAttribute("class","modal");
+
             let projectContainer = document.createElement("section");
-            projectContainer.setAttribute("id","create-project-form");
+            projectContainer.setAttribute("class", "modal-content");
     
             let projectNameLabel = document.createElement("label");
             projectNameLabel.setAttribute("for","pname");
@@ -214,11 +253,25 @@ const DisplayController = (function() {
             projectContainer.appendChild(projectColorField);
             projectContainer.appendChild(projectCreateButton);
     
-            navigationContainer.appendChild(projectContainer); 
+            modalContainer.appendChild(projectContainer);
+            mainContainer.appendChild(modalContainer); 
 
             // create button event listener
             projectCreateButton.addEventListener("click", submitCreateProject);
+
+            window.onclick = function(event) {
+                if (event.target == modalContainer) {
+                    closeCreateProjectForm();
+                }
+            }
         }
+    }
+
+
+
+    function closeCreateProjectForm() {
+        let deleteProjectModal = document.querySelector("#create-project-modal");
+        deleteProjectModal.remove();
     }
 
     function showCreateItemForm(projectID) {
@@ -527,6 +580,7 @@ const DisplayController = (function() {
 
         // call create project
         TodolistController.createProject(projectNameValue, projectDescValue, projectDueDateValue, projectColorValue);
+        closeCreateProjectForm();
         displayProjects();
 
     }

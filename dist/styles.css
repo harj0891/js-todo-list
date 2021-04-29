@@ -1,14 +1,83 @@
 
+* {
+    box-sizing: border-box;
+}
+
+h1, p, label {
+    margin: 0;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+}
+
+.header{
+    background-color: rgb(26, 26, 26);
+}
+
+.title{
+    padding:20px;
+}
+
 .main {
     display:grid;
     grid-template-columns: 250px auto;
+    height: calc(100vh - 67px);
+}
+
+
+.navigation {
+    background-color: rgb(26, 26, 26);
+    top: 100px;
+    bottom: 0;
+}
+
+.project {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.project p {
+    margin: 10px 5px;
 
 }
 
 
-.item *{
+.project-title {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+
+.button {
+    border: none;
+    border-radius: none;
+    margin: 10px 5px;
+    padding: 5px 10px;
+}
+
+.todolist{
+    background-color: rgb(240, 240, 240);
+    padding: 40px 60px;
+}
+
+
+.item * {
     display: inline;
 }
+
+.item.completed p {
+    text-decoration: line-through;
+}
+
+
+
+
+
+
+
 
 
 .modal {
@@ -31,21 +100,46 @@
     width: 20%;
 }
 
-.label-grey {
-    background-color: hsl(0, 0%, 73%);
-
+.modal-content p,label {
+    color:black;
 }
 
-.label-blue {
-    background-color: hsl(221, 30%, 73%);
-    
+#create-project-modal *{
+    display: block;
 }
 
-.label-red {
-    background-color: hsl(0, 30%, 73%);
-    
+
+
+
+
+.project.grey {
+    background-color: hsl(0, 0%, 20%);
 }
 
-.label-green {
-    background-color: hsl(114, 30%, 73%);
+.project.blue {
+    background-color: hsl(221, 20%, 20%);
+}
+
+.project.red {
+    background-color: hsl(0, 20%, 20%);
+}
+
+.project.green {
+    background-color: hsl(114, 20%, 20%);
+}
+
+.todolist.grey {
+    background-color: hsl(0, 0%, 15%);
+}
+
+.todolist.blue {
+    background-color: hsl(221, 20%, 15%);
+}
+
+.todolist.red {
+    background-color: hsl(0, 20%, 15%);
+}
+
+.todolist.green {
+    background-color: hsl(116, 20%, 15%);
 }
